@@ -1,0 +1,1 @@
+Header image "[Woman Scooping Ice Cream](https://www.pexels.com/photo/woman-scooping-ice-cream-25391582/)" by Viridiana Rivera is used under CC license.
