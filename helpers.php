@@ -42,3 +42,18 @@ function loadPartial(string $name) {
         echo "Partial {$partialPath} not found";
     }
 }
+
+/**
+ * Inspect a variable and optionally die
+ * 
+ * @param mixed $variable
+ * @param bool $die Dies after the variable is dumped
+ * @return void
+ */
+function inspect(mixed $variable, bool $die = false) {
+    echo '<pre>' . var_dump($variable) . '</pre>';
+
+    if ($die) {
+        die();
+    }
+}
