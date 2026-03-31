@@ -1,0 +1,16 @@
+{
+    "name": "adrichey/vanilla-php-job-listing-site-example",
+    "description": "VanillaJobs job listing application",
+    "authors": [
+        {
+            "name": "adrichey",
+            "homepage": "https://github.com/adrichey"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Framework\\": "Framework/",
+            "App\\": "App/"
+        }
+    }
+}
