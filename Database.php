@@ -27,11 +27,11 @@ class Database {
      * @return PDOStatement
      * @throws PDOException
      */
-    public function query(string $query): PDOStatement
+    public function query(string $query, array $parameters = []): PDOStatement
     {
         try {
             $statement = $this->conn->prepare($query);
-            $statement->execute();
+            $statement->execute($parameters);
             return $statement;
         } catch (PDOException $e) {
             throw new Exception("Query failed to execute: {$e->getMessage()}");
