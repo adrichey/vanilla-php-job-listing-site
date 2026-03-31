@@ -6,8 +6,7 @@
  * @param string $path
  * @return string
  */
-function basePath(string $path = ''): string
-{
+function basePath(string $path = ''): string {
     return __DIR__ . '/' . $path;
 }
 
@@ -17,10 +16,11 @@ function basePath(string $path = ''): string
  * @param string $name
  * @return void
  */
-function loadView(string $name) {
+function loadView(string $name, array $data = []) {
     $viewPath = basePath("views/{$name}.view.php");
 
     if (file_exists($viewPath)) {
+        extract($data);
         require $viewPath;
     } else {
         echo "View {$viewPath} not found";
@@ -56,4 +56,21 @@ function inspect(mixed $variable, bool $die = false) {
     if ($die) {
         die();
     }
+}
+
+function formatCurrency(int $amountInCents): string {
+    $amount = $amountInCents / 100;
+    $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
+
+    $formattedAmount = $formatter->formatCurrency($amount, 'USD');
+
+    if ($formattedAmount == false) {
+        return $amount;
+    }
+
+    if (str_ends_with($formattedAmount, '.00')) {
+        return substr($formattedAmount, 0, -3);
+    }
+
+    return $formattedAmount;
 }
