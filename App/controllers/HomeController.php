@@ -12,7 +12,7 @@ class HomeController {
         $this->db = new Database($dbConfig);
     }
 
-    public function index() {
+    public function index(): void {
         $listings = $this->db->query('SELECT * FROM listings LIMIT 6')->fetchAll();
 
         loadView('home', [

@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 class ErrorController {
-    public static function notFound() {
+    public static function notFound(): void {
         http_response_code(404);
         loadView("error", [
             'status' => '404 Error',
@@ -11,7 +11,7 @@ class ErrorController {
         ]);
     }
 
-    public static function forbidden() {
+    public static function forbidden(): void {
         http_response_code(403);
         loadView("error", [
             'status' => '403 Error',

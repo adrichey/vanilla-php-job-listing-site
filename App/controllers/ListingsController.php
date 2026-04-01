@@ -12,7 +12,7 @@ class ListingsController {
         $this->db = new Database($dbConfig);
     }
 
-    public function index() {
+    public function index(): void {
         $listings = $this->db->query('SELECT * FROM listings LIMIT 6')->fetchAll();
 
         loadView('listings/index', [
@@ -20,7 +20,7 @@ class ListingsController {
         ]);
     }
 
-    public function show(array $params) {
+    public function show(array $params): void {
         $listing = $this->db
             ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id']])
             ->fetch();
@@ -35,7 +35,7 @@ class ListingsController {
         ]);
     }
 
-    public function create() {
+    public function create(): void {
         loadView('listings/create');
     }
 }
