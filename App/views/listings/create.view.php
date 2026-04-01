@@ -76,6 +76,7 @@ loadPartial('top-banner');
                     <option value="monthly"<?= $listing['salary_frequency'] == 'monthly' ? ' selected' : '' ?>>Monthly</option>
                     <option value="bi_weekly"<?= $listing['salary_frequency'] == 'bi_weekly' ? ' selected' : '' ?>>Bi-Weekly</option>
                     <option value="weekly"<?= $listing['salary_frequency'] == 'weekly' ? ' selected' : '' ?>>Weekly</option>
+                    <option value="hourly"<?= $listing['salary_frequency'] == 'hourly' ? ' selected' : '' ?>>Hourly</option>
                     <option value="per_project"<?= $listing['salary_frequency'] == 'per_project' ? ' selected' : '' ?>>Per Project</option>
                 </select>
             </div>

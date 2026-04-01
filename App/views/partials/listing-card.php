@@ -8,18 +8,6 @@
                 <strong>Location:</strong> <?= $listing->city ?>, <?= $listing->state ?>
                 <span class="text-xs bg-blue-500 text-white rounded-full px-2 py-1 ml-2">Local</span>
             </li>
-            <li class="mb-2">
-                <strong>Tags:</strong>
-                <?php
-                    // TODO: Store tags as an array in the database as a table and merge with listings
-                    // This will allow us to query easily later on, and prevent this mess.
-                    $tags = explode(',', $listing->tags);
-                    foreach ($tags as $k => $v) {
-                        $tags[$k] = '<span>' . trim($v) . '</span>';
-                    }
-                    echo implode(', ', $tags);
-                ?>
-            </li>
         </ul>
         <a
         href="/listing/<?= $listing->id ?>"
