@@ -3,100 +3,197 @@ loadPartial('head');
 loadPartial('navbar');
 loadPartial('showcase-search');
 loadPartial('top-banner');
+
+$labels = [
+    'title' => 'Job Title',
+    'description' => 'Job Description',
+    'salary' => 'Salary',
+    'salary_frequency' => 'Salary Frequency',
+    'requirements' => 'Requirements',
+    'benefits' => 'Benefits',
+    'company' => 'Company Name',
+    'address' => 'Address',
+    'city' => 'City',
+    'state' => 'State',
+    'zip_code' => 'ZIP Code',
+    'phone' => 'Phone',
+    'email' => 'Email Address For Applications',
+];
 ?>
 
 <!-- Post a Job Form Box -->
 <section class="flex justify-center items-center mt-20">
     <div class="bg-white p-8 rounded-lg shadow-md w-full md:w-600 mx-6">
         <h2 class="text-4xl text-center font-bold mb-4">Create Job Listing</h2>
+        <?php if (!empty($errors)): ?>
+            <div class="message border rounded bg-red-100 border-red-500 text-red-500 p-3 my-3">
+                <p>The following fields are required:</p>
+                <ul class="list-disc ml-4">
+                <?php foreach ($errors as $error): ?>
+                    <li><?= $labels[$error] ?></li>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <!--
-        <div class="message bg-red-100 p-3 my-3">This is an error message.</div>
         <div class="message bg-green-100 p-3 my-3">
             This is a success message.
         </div>
         -->
-        <form method="POST">
+        <form method="POST" action="/listings">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-500">
                 Job Info
             </h2>
             <div class="mb-4">
+                <label for="title" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['title'] ?> <span class="text-red-500">*</span>
+                </label>
                 <input
+                id="title"
                 type="text"
                 name="title"
-                placeholder="Job Title"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="description" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['description'] ?> <span class="text-red-500">*</span>
+                </label>
                 <textarea
+                id="description"
                 name="description"
-                placeholder="Job Description"
-                class="w-full px-4 py-2 border rounded focus:outline-none"></textarea>
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                ></textarea>
             </div>
             <div class="mb-4">
+                <label for="salary" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['salary'] ?>
+                </label>
                 <input
+                id="salary"
                 type="text"
                 name="salary"
-                placeholder="Annual Salary"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="salary_frequency" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['salary_frequency'] ?>
+                </label>
+                <select
+                id="salary_frequency"
+                name="salary_frequency"
+                class="w-full px-4 py-2 border rounded focus:outline-none bg-white"
+                >
+                    <option value=""></option>
+                    <option value="annually">Annually</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="bi_weekly">Bi-Weekly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="per_project">Per Project</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="requirements" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['requirements'] ?>
+                </label>
                 <input
+                id="requirements"
                 type="text"
                 name="requirements"
-                placeholder="Requirements"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="benefits" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['benefits'] ?>
+                </label>
                 <input
+                id="benefits"
                 type="text"
                 name="benefits"
-                placeholder="Benefits"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-500">
                 Company Info & Location
             </h2>
             <div class="mb-4">
+                <label for="company" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['company'] ?>
+                </label>
                 <input
+                id="company"
                 type="text"
                 name="company"
-                placeholder="Company Name"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="address" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['address'] ?>
+                </label>
                 <input
+                id="address"
                 type="text"
                 name="address"
-                placeholder="Address"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="city" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['city'] ?> <span class="text-red-500">*</span>
+                </label>
                 <input
+                id="city"
                 type="text"
                 name="city"
-                placeholder="City"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="state" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['state'] ?> <span class="text-red-500">*</span>
+                </label>
                 <input
+                id="state"
                 type="text"
                 name="state"
-                placeholder="State"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="zip_code" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['zip_code'] ?> <span class="text-red-500">*</span>
+                </label>
                 <input
+                id="zip_code"
+                type="text"
+                name="zip_code"
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
+            </div>
+            <div class="mb-4">
+                <label for="phone" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['phone'] ?>
+                </label>
+                <input
+                id="phone"
                 type="text"
                 name="phone"
-                placeholder="Phone"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    <?= $labels['email'] ?> <span class="text-red-500">*</span>
+                </label>
                 <input
+                id="email"
                 type="email"
                 name="email"
-                placeholder="Email Address For Applications"
-                class="w-full px-4 py-2 border rounded focus:outline-none" />
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
             </div>
             <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 my-3 rounded focus:outline-none">
                 Save

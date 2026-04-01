@@ -75,3 +75,7 @@ function formatCurrency(int $amountInCents): string {
 
     return $formattedAmount;
 }
+
+function sanitize(string $dirty): string {
+    return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
+}
