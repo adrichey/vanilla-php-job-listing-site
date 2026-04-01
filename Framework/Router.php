@@ -5,12 +5,15 @@ namespace Framework;
 class Router {
     protected $routes = [];
 
-    private function registerRoute(string $method, string $uri, string $controller): void
+    private function registerRoute(string $method, string $uri, string $action): void
     {
+        list($controller, $controllerMethod) = explode('@', $action);
+
         array_push($this->routes, [
             'method' => $method,
             'uri' => $uri,
             'controller' => $controller,
+            'controllerMethod' => $controllerMethod,
         ]);
     }
 
@@ -38,7 +41,11 @@ class Router {
     {
         foreach ($this->routes as $route) {
             if ($route['method'] == $method && $route['uri'] == $uri) {
-                require(basePath('App/' . $route['controller']));
+                $controller = "App\\Controllers\\{$route['controller']}";
+                $controllerMethod = $route['controllerMethod'];
+
+                $controllerInstance = new $controller();
+                $controllerInstance->$controllerMethod();
                 return;
             }
         }
