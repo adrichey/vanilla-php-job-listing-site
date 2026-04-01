@@ -52,7 +52,7 @@ loadPartial('top-banner');
             </div>
             <div class="mb-4">
                 <label for="salary" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
-                    <?= $labels['salary'] ?>
+                    <?= $labels['salary'] ?> <span class="text-red-500">*</span>
                 </label>
                 <input
                 id="salary"
@@ -64,7 +64,7 @@ loadPartial('top-banner');
             </div>
             <div class="mb-4">
                 <label for="salary_frequency" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
-                    <?= $labels['salary_frequency'] ?>
+                    <?= $labels['salary_frequency'] ?> <span class="text-red-500">*</span>
                 </label>
                 <select
                 id="salary_frequency"

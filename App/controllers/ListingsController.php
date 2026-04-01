@@ -81,6 +81,8 @@ class ListingsController {
         $requiredFields = [
             'title',
             'description',
+            'salary',
+            'salary_frequency',
             'city',
             'state',
             'zip_code',
@@ -120,6 +122,26 @@ class ListingsController {
         }
 
         $this->db->query($query, $listingData);
+
+        redirect('/listings');
+    }
+
+    public function destroy(array $params): void {
+        $listingId = $params['id'];
+
+        $listing = $this->db
+            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound();
+            return;
+        }
+
+        // TODO: Only allow user that created listing to delete it once we implement user system
+        $this->db->query('DELETE FROM listings WHERE id = :id', [
+            'id' => $listing->id
+        ]);
 
         redirect('/listings');
     }

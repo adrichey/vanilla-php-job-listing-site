@@ -37,6 +37,11 @@ class Router {
     public function route(string $uri): void {
         $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+        // Override the request method if _method input is present
+        if ($requestMethod === 'POST' && isset($_POST['_method'])) {
+            $requestMethod = strtoupper($_POST['_method']);
+        }
+
         foreach ($this->routes as $route) {
             // Split the URI into segments
             $uriSegments = explode('/', trim($uri, '/'));
