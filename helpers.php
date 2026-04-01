@@ -80,6 +80,10 @@ function convertCurrencyToCents(int|float $amount): int {
     return intval(round($amount * 100, 0));
 }
 
+function convertCentsToDollars(int $amount): float {
+    return floatval($amount) / 100;
+}
+
 function sanitize(string $dirty): string {
     return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
 }

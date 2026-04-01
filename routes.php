@@ -5,4 +5,6 @@ $router->get('/listings', 'ListingsController@index');
 $router->get('/listings/create', 'ListingsController@create');
 $router->get('/listings/{id}', 'ListingsController@show');
 $router->post('/listings', 'ListingsController@store');
+$router->get('/listings/{id}/edit', 'ListingsController@edit');
+$router->put('/listings/{id}', 'ListingsController@update');
 $router->delete('/listings/{id}', 'ListingsController@destroy');

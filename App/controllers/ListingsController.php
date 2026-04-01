@@ -78,23 +78,7 @@ class ListingsController {
 
         $listingData = array_map('sanitize', $listingData);
 
-        $requiredFields = [
-            'title',
-            'description',
-            'salary',
-            'salary_frequency',
-            'city',
-            'state',
-            'zip_code',
-            'email',
-        ];
-
-        $errors = [];
-        foreach ($requiredFields as $field) {
-            if (empty($listingData[$field]) || !Validation::string($listingData[$field])) {
-                $errors[] = $field;
-            }
-        }
+        $errors = $this->validateListingData($listingData);
 
         if (!empty($errors)) {
             $this->create([
@@ -126,6 +110,94 @@ class ListingsController {
         redirect('/listings');
     }
 
+    public function edit(array $params = []): void {
+        $listingId = $params['id'];
+
+        $existingListing = $this->db
+            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->fetch();
+
+        if (!$existingListing) {
+            ErrorController::notFound();
+            return;
+        }
+
+        $allowedFieldsKeys = array_keys($this->allowedFields);
+
+        // Default the form values if they are not present (i.e. submitted via a form)
+        $listingData = [];
+        foreach ($allowedFieldsKeys as $field) {
+            $listingData[$field] = $params['listing'][$field] ?? $existingListing->$field;
+        }
+
+        $listingData['id'] = $existingListing->id;
+        $listingData['salary'] = convertCentsToDollars($listingData['salary']);
+
+        loadView('listings/edit', [
+            'errors' => $params['errors'] ?? [],
+            'labels' => $this->allowedFields,
+            'listing' => $listingData,
+        ]);
+    }
+
+    public function update(array $params): void {
+        $listingId = $params['id'];
+
+        $listing = $this->db
+            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound();
+            return;
+        }
+
+        $listingData = array_intersect_key($_POST, $this->allowedFields);
+
+        $listingData = array_map('sanitize', $listingData);
+
+        $errors = $this->validateListingData($listingData);
+
+        if (!empty($errors)) {
+            $this->edit([
+                'errors' => $errors,
+                'listing' => $listingData,
+            ]);
+            return;
+        }
+
+        // Prepare query fields to persist listing to DB
+        $fields = [];
+        $fieldKeys = array_keys($this->allowedFields);
+        foreach ($fieldKeys as $field) {
+            $fields[] = "{$field} = :{$field}";
+        }
+        $fields = implode(',', $fields);
+
+        $query = "UPDATE listings SET {$fields} WHERE id = :id";
+
+        // Default empty values to null for query
+        foreach ($listingData as $key => $value) {
+            if ($value === '') {
+                $listingData[$key] = null;
+            }
+        }
+
+        // Salary is stored in cents, so we need to normalize input
+        if ($listingData['salary'] !== null) {
+            $listingData['salary'] = convertCurrencyToCents(floatval($listingData['salary']));
+        }
+
+        $listingData['id'] = $listing->id;
+        $this->db->query($query, $listingData);
+
+        // TODO: Refactor into session class later on
+        // Set flash message
+        $_SESSION['success_message'] = 'Listing updated successfully';
+
+        redirect('/listings');
+    }
+
     public function destroy(array $params): void {
         $listingId = $params['id'];
 
@@ -148,5 +220,27 @@ class ListingsController {
         $_SESSION['success_message'] = 'Listing deleted successfully';
 
         redirect('/listings');
+    }
+
+    private function validateListingData(array $listingData): array {
+        $requiredFields = [
+            'title',
+            'description',
+            'salary',
+            'salary_frequency',
+            'city',
+            'state',
+            'zip_code',
+            'email',
+        ];
+
+        $errors = [];
+        foreach ($requiredFields as $field) {
+            if (empty($listingData[$field]) || !Validation::string($listingData[$field])) {
+                $errors[] = $field;
+            }
+        }
+
+        return $errors;
     }
 }
