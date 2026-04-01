@@ -15,19 +15,19 @@ class ListingsController {
 
         // TODO: Might be good to put this into the Listings model once created
         $this->allowedFields = [
-            'title',
-            'description',
-            'salary',
-            'salary_frequency',
-            'requirements',
-            'benefits',
-            'company',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'phone',
-            'email',
+            'title' => 'Job Title',
+            'description' => 'Job Description',
+            'salary' => 'Salary',
+            'salary_frequency' => 'Salary Frequency',
+            'requirements' => 'Requirements',
+            'benefits' => 'Benefits',
+            'company' => 'Company Name',
+            'address' => 'Address',
+            'city' => 'City',
+            'state' => 'State',
+            'zip_code' => 'ZIP Code',
+            'phone' => 'Phone',
+            'email' => 'Email Address For Applications',
         ];
     }
 
@@ -55,20 +55,23 @@ class ListingsController {
     }
 
     public function create(array $params = []): void {
+        $allowedFieldsKeys = array_keys($this->allowedFields);
+
         // Default the form values if they are not present (i.e. submitted via a form)
         $listing = [];
-        foreach ($this->allowedFields as $field) {
+        foreach ($allowedFieldsKeys as $field) {
             $listing[$field] = $params['listing'][$field] ?? '';
         }
 
         loadView('listings/create', [
             'errors' => $params['errors'] ?? [],
+            'labels' => $this->allowedFields,
             'listing' => $listing,
         ]);
     }
 
     public function store(): void {
-        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
+        $listingData = array_intersect_key($_POST, $this->allowedFields);
 
         // TODO: Get this from logged in user session details once implemented
         $listingData['user_id'] = 1;

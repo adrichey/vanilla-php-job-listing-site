@@ -3,22 +3,6 @@ loadPartial('head');
 loadPartial('navbar');
 loadPartial('showcase-search');
 loadPartial('top-banner');
-
-$labels = [
-    'title' => 'Job Title',
-    'description' => 'Job Description',
-    'salary' => 'Salary',
-    'salary_frequency' => 'Salary Frequency',
-    'requirements' => 'Requirements',
-    'benefits' => 'Benefits',
-    'company' => 'Company Name',
-    'address' => 'Address',
-    'city' => 'City',
-    'state' => 'State',
-    'zip_code' => 'ZIP Code',
-    'phone' => 'Phone',
-    'email' => 'Email Address For Applications',
-];
 ?>
 
 <!-- Post a Job Form Box -->
