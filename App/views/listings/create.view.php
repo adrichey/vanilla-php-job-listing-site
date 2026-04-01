@@ -53,6 +53,7 @@ $labels = [
                 type="text"
                 name="title"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['title'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -63,7 +64,7 @@ $labels = [
                 id="description"
                 name="description"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
-                ></textarea>
+                ><?= $listing['description'] ?></textarea>
             </div>
             <div class="mb-4">
                 <label for="salary" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
@@ -74,6 +75,7 @@ $labels = [
                 type="text"
                 name="salary"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['salary'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -86,11 +88,11 @@ $labels = [
                 class="w-full px-4 py-2 border rounded focus:outline-none bg-white"
                 >
                     <option value=""></option>
-                    <option value="annually">Annually</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="bi_weekly">Bi-Weekly</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="per_project">Per Project</option>
+                    <option value="annually"<?= $listing['salary_frequency'] == 'annually' ? ' selected' : '' ?>>Annually</option>
+                    <option value="monthly"<?= $listing['salary_frequency'] == 'monthly' ? ' selected' : '' ?>>Monthly</option>
+                    <option value="bi_weekly"<?= $listing['salary_frequency'] == 'bi_weekly' ? ' selected' : '' ?>>Bi-Weekly</option>
+                    <option value="weekly"<?= $listing['salary_frequency'] == 'weekly' ? ' selected' : '' ?>>Weekly</option>
+                    <option value="per_project"<?= $listing['salary_frequency'] == 'per_project' ? ' selected' : '' ?>>Per Project</option>
                 </select>
             </div>
             <div class="mb-4">
@@ -102,6 +104,7 @@ $labels = [
                 type="text"
                 name="requirements"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['requirements'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -113,6 +116,7 @@ $labels = [
                 type="text"
                 name="benefits"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['benefits'] ?>"
                 />
             </div>
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-500">
@@ -127,6 +131,7 @@ $labels = [
                 type="text"
                 name="company"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['company'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -138,6 +143,7 @@ $labels = [
                 type="text"
                 name="address"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['address'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -149,6 +155,7 @@ $labels = [
                 type="text"
                 name="city"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['city'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -160,6 +167,7 @@ $labels = [
                 type="text"
                 name="state"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['state'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -171,6 +179,7 @@ $labels = [
                 type="text"
                 name="zip_code"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['zip_code'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -182,6 +191,7 @@ $labels = [
                 type="text"
                 name="phone"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['phone'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -193,6 +203,7 @@ $labels = [
                 type="email"
                 name="email"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $listing['email'] ?>"
                 />
             </div>
             <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 my-3 rounded focus:outline-none">

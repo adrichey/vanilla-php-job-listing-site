@@ -7,10 +7,28 @@ use Framework\Validation;
 
 class ListingsController {
     private $db;
+    private $allowedFields;
 
     public function __construct() {
         $dbConfig = require basePath('config/db.php');
         $this->db = new Database($dbConfig);
+
+        // TODO: Might be good to put this into the Listings model once created
+        $this->allowedFields = [
+            'title',
+            'description',
+            'salary',
+            'salary_frequency',
+            'requirements',
+            'benefits',
+            'company',
+            'address',
+            'city',
+            'state',
+            'zip_code',
+            'phone',
+            'email',
+        ];
     }
 
     public function index(): void {
@@ -37,30 +55,20 @@ class ListingsController {
     }
 
     public function create(array $params = []): void {
+        // Default the form values if they are not present (i.e. submitted via a form)
+        $listing = [];
+        foreach ($this->allowedFields as $field) {
+            $listing[$field] = $params['listing'][$field] ?? '';
+        }
+
         loadView('listings/create', [
             'errors' => $params['errors'] ?? [],
+            'listing' => $listing,
         ]);
     }
 
     public function store(): void {
-        // TODO: Might be good to put this into the Listings model once created
-        $allowedFields = [
-            'title',
-            'description',
-            'salary',
-            'salary_frequency',
-            'requirements',
-            'benefits',
-            'company',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'phone',
-            'email',
-        ];
-
-        $listingData = array_intersect_key($_POST, array_flip($allowedFields));
+        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
 
         // TODO: Get this from logged in user session details once implemented
         $listingData['user_id'] = 1;
@@ -83,8 +91,11 @@ class ListingsController {
             }
         }
 
-        if (count($errors) > 0) {
-            $this->create(['errors' => $errors]);
+        if (!empty($errors)) {
+            $this->create([
+                'errors' => $errors,
+                'listing' => $listingData,
+            ]);
             return;
         }
 
