@@ -102,7 +102,25 @@ class ListingsController {
             return;
         }
 
-        // TODO: Replace this with save logic
-        $this->index();
+        // Prepare query fields to persist listing to DB
+        $fields = implode(',', array_keys($listingData));
+        $values = ':' . implode(',:', array_keys($listingData));
+        $query = "INSERT INTO listings ({$fields}) VALUES ({$values});";
+
+        // Default empty values to null for query
+        foreach ($listingData as $key => $value) {
+            if ($value === '') {
+                $listingData[$key] = null;
+            }
+        }
+
+        // Salary is stored in cents, so we need to normalize input
+        if ($listingData['salary'] !== null) {
+            $listingData['salary'] = convertCurrencyToCents(floatval($listingData['salary']));
+        }
+
+        $this->db->query($query, $listingData);
+
+        redirect('/listings');
     }
 }

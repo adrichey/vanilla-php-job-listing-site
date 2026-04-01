@@ -76,6 +76,15 @@ function formatCurrency(int $amountInCents): string {
     return $formattedAmount;
 }
 
+function convertCurrencyToCents(int|float $amount): int {
+    return intval(round($amount * 100, 0));
+}
+
 function sanitize(string $dirty): string {
     return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
+}
+
+function redirect(string $url): void {
+    header("Location: {$url}");
+    exit;
 }
