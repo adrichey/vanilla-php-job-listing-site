@@ -32,7 +32,7 @@ class ListingsController {
     }
 
     public function index(): void {
-        $listings = $this->db->query('SELECT * FROM listings LIMIT 6')->fetchAll();
+        $listings = $this->db->query('SELECT * FROM listings')->fetchAll();
 
         loadView('listings/index', [
             'listings' => $listings,
@@ -107,7 +107,7 @@ class ListingsController {
         // Prepare query fields to persist listing to DB
         $fields = implode(',', array_keys($listingData));
         $values = ':' . implode(',:', array_keys($listingData));
-        $query = "INSERT INTO listings ({$fields}) VALUES ({$values});";
+        $query = "INSERT INTO listings ({$fields}) VALUES ({$values})";
 
         // Default empty values to null for query
         foreach ($listingData as $key => $value) {
@@ -142,6 +142,10 @@ class ListingsController {
         $this->db->query('DELETE FROM listings WHERE id = :id', [
             'id' => $listing->id
         ]);
+
+        // TODO: Refactor into session class later on
+        // Set flash message
+        $_SESSION['success_message'] = 'Listing deleted successfully';
 
         redirect('/listings');
     }
