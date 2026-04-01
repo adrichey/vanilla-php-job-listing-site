@@ -20,10 +20,15 @@ class ListingsController {
         ]);
     }
 
-    public function show() {
-        $listingId = $_GET['id'] ?? '';
+    public function show(array $params) {
+        $listing = $this->db
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id']])
+            ->fetch();
 
-        $listing = $this->db->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $listingId])->fetch();
+        if (!$listing) {
+            ErrorController::notFound();
+            return;
+        }
 
         loadView('listings/show', [
             'listing' => $listing,

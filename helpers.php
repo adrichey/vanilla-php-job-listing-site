@@ -65,7 +65,7 @@ function formatCurrency(int $amountInCents): string {
 
     $formattedAmount = $formatter->formatCurrency($amount, 'USD');
 
-    if ($formattedAmount == false) {
+    if ($formattedAmount === false) {
         return $amount;
     }
 

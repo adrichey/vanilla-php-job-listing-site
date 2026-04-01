@@ -39,15 +39,51 @@ class Router {
         $this->registerRoute('DELETE', $uri, $controller);
     }
 
-    public function route(string $method, string $uri): void
+    public function route(string $uri): void
     {
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+
         foreach ($this->routes as $route) {
-            if ($route['method'] == $method && $route['uri'] == $uri) {
+            // Split the URI into segments
+            $uriSegments = explode('/', trim($uri, '/'));
+
+            // Split the current registered route into segments
+            $routeSegments = explode('/', trim($route['uri'], '/'));
+
+            // Routes have a different number of segments, not a matching route
+            if (count($uriSegments) !== count($routeSegments)) {
+                continue;
+            }
+
+            // Requests method don't match
+            if (strtoupper($route['method']) !== strtoupper($requestMethod)) {
+                continue;
+            }
+
+            // Check if we have a matching route and extract parameters
+            $requestParams = [];
+            $match = true;
+
+            foreach ($routeSegments as $k => $v) {
+                // Extract parameter and skip this segment if it is a variable segment
+                if (str_starts_with($v, '{') && str_ends_with($v, '}')) {
+                    $paramKey = trim($v, "{}");
+                    $requestParams[$paramKey] = $uriSegments[$k];
+                    continue;
+                }
+
+                if ($uriSegments[$k] !== $v) {
+                    $match = false;
+                    break;
+                }
+            }
+
+            if ($match) {
                 $controller = "App\\Controllers\\{$route['controller']}";
                 $controllerMethod = $route['controllerMethod'];
 
                 $controllerInstance = new $controller();
-                $controllerInstance->$controllerMethod();
+                $controllerInstance->$controllerMethod($requestParams);
                 return;
             }
         }
