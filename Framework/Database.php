@@ -10,8 +10,7 @@ use PDOException;
 class Database {
     public $conn;
 
-    public function __construct(array $config)
-    {
+    public function __construct(array $config) {
         $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['dbname']}";
 
         $options = [
@@ -34,8 +33,7 @@ class Database {
      * @return PDOStatement
      * @throws PDOException
      */
-    public function query(string $query, array $parameters = []): PDOStatement
-    {
+    public function query(string $query, array $parameters = []): PDOStatement {
         try {
             $statement = $this->conn->prepare($query);
             $statement->execute($parameters);
