@@ -18,6 +18,7 @@ loadPartial('navbar');
                 type="text"
                 name="name"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $formData['name'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -29,6 +30,7 @@ loadPartial('navbar');
                 type="email"
                 name="email"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $formData['email'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -40,6 +42,7 @@ loadPartial('navbar');
                 type="text"
                 name="city"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $formData['city'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -51,6 +54,7 @@ loadPartial('navbar');
                 type="text"
                 name="state"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $formData['state'] ?>"
                 />
             </div>
             <div class="mb-4">
@@ -62,6 +66,7 @@ loadPartial('navbar');
                 type="text"
                 name="zip_code"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
+                value="<?= $formData['zip_code'] ?>"
                 />
             </div>
             <div class="mb-4">
