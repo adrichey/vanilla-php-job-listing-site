@@ -214,7 +214,7 @@ class ListingsController {
 
     private function validateListingData(array $listingData): array {
         $errors = [];
-        if (empty($listingData['title']) || !Validation::string($listingData['title'])) {
+        if (empty($listingData['title']) || !Validation::string($listingData['title'], 2, 255)) {
             $errors[] = "Job Title cannot be blank";
         }
 
@@ -239,15 +239,15 @@ class ListingsController {
             $errors[] = "Salary Frequency is required";
         }
 
-        if (empty($listingData['city']) || !Validation::string($listingData['city'])) {
+        if (empty($listingData['city']) || !Validation::string($listingData['city'], 2, 255)) {
             $errors[] = "City cannot be blank";
         }
 
-        if (empty($listingData['state']) || !Validation::string($listingData['state'])) {
+        if (empty($listingData['state']) || !Validation::string($listingData['state'], 2, 255)) {
             $errors[] = "State cannot be blank";
         }
 
-        if (empty($listingData['zip_code']) || !Validation::string($listingData['zip_code'])) {
+        if (empty($listingData['zip_code']) || !Validation::string($listingData['zip_code'], 2, 45)) {
             $errors[] = "ZIP Code cannot be blank";
         }
 
