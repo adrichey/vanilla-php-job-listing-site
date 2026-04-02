@@ -117,6 +117,9 @@ class UserController {
             }
         }
 
+        // Hash passwords
+        $formData['password'] = password_hash($formData['password'], PASSWORD_DEFAULT);
+
         $this->db->query($query, $formData);
 
         $_SESSION['success_message'] = 'Your account has been created successfully! Please log in below.';
