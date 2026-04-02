@@ -41,7 +41,7 @@ class ListingsController {
 
     public function show(array $params): void {
         $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id']])
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
             ->fetch();
 
         if (!$listing) {
@@ -111,10 +111,8 @@ class ListingsController {
     }
 
     public function edit(array $params = []): void {
-        $listingId = $params['id'];
-
         $existingListing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
             ->fetch();
 
         if (!$existingListing) {
@@ -141,10 +139,8 @@ class ListingsController {
     }
 
     public function update(array $params): void {
-        $listingId = $params['id'];
-
         $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
             ->fetch();
 
         if (!$listing) {
@@ -172,7 +168,7 @@ class ListingsController {
         foreach ($fieldKeys as $field) {
             $fields[] = "{$field} = :{$field}";
         }
-        $fields = implode(',', $fields);
+        $fields = implode(', ', $fields);
 
         $query = "UPDATE listings SET {$fields} WHERE id = :id";
 
@@ -195,14 +191,14 @@ class ListingsController {
         // Set flash message
         $_SESSION['success_message'] = 'Listing updated successfully';
 
-        redirect('/listings');
+        redirect("/listings/{$listing->id}");
     }
 
     public function destroy(array $params): void {
         $listingId = $params['id'];
 
         $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id', ['id' => $listingId])
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $listingId])
             ->fetch();
 
         if (!$listing) {
