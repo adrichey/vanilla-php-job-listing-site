@@ -227,6 +227,34 @@ class ListingsController {
         redirect('/listings');
     }
 
+    public function search(): void {
+        $keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
+        $location = isset($_GET['location']) ? trim($_GET['location']) : '';
+
+        // Build keywords WHERE clause
+        $keywordFields = ['title', 'description', 'tags', 'company'];
+        $keywordSearch = implode(' OR ', array_map(fn($keyword) => "{$keyword} LIKE :keywords", $keywordFields));
+
+        // Build location WHERE clause
+        $locationFields = ['city', 'state', 'zip_code'];
+        $locationSearch = implode(' OR ', array_map(fn($keyword) => "{$keyword} LIKE :location", $locationFields));
+
+        $query = "SELECT * FROM listings WHERE ({$keywordSearch}) AND ({$locationSearch})";
+
+        $params = [
+            'keywords' => "%{$keywords}%",
+            'location' => "%{$location}%",
+        ];
+
+        $listings = $this->db->query($query, $params)->fetchAll();
+
+        loadView('/listings/index', [
+            'listings' => $listings,
+            'keywords' => htmlspecialchars(sanitize($keywords)),
+            'location' => htmlspecialchars(sanitize($location)),
+        ]);
+    }
+
     private function validateListingData(array $listingData): array {
         $errors = [];
         if (empty($listingData['title']) || !Validation::string($listingData['title'], 2, 255)) {
