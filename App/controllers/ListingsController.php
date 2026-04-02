@@ -15,19 +15,19 @@ class ListingsController {
 
         // TODO: Might be good to put this into the Listings model once created
         $this->allowedFields = [
-            'title' => 'Job Title',
-            'description' => 'Job Description',
-            'salary' => 'Salary',
-            'salary_frequency' => 'Salary Frequency',
-            'requirements' => 'Requirements',
-            'benefits' => 'Benefits',
-            'company' => 'Company Name',
-            'address' => 'Address',
-            'city' => 'City',
-            'state' => 'State',
-            'zip_code' => 'ZIP Code',
-            'phone' => 'Phone',
-            'email' => 'Email Address For Applications',
+            'title',
+            'description',
+            'salary',
+            'salary_frequency',
+            'requirements',
+            'benefits',
+            'company',
+            'address',
+            'city',
+            'state',
+            'zip_code',
+            'phone',
+            'email',
         ];
     }
 
@@ -55,23 +55,20 @@ class ListingsController {
     }
 
     public function create(array $params = []): void {
-        $allowedFieldsKeys = array_keys($this->allowedFields);
-
         // Default the form values if they are not present (i.e. submitted via a form)
         $listing = [];
-        foreach ($allowedFieldsKeys as $field) {
+        foreach ($this->allowedFields as $field) {
             $listing[$field] = $params['listing'][$field] ?? '';
         }
 
         loadView('listings/create', [
             'errors' => $params['errors'] ?? [],
-            'labels' => $this->allowedFields,
             'listing' => $listing,
         ]);
     }
 
     public function store(): void {
-        $listingData = array_intersect_key($_POST, $this->allowedFields);
+        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
 
         // TODO: Get this from logged in user session details once implemented
         $listingData['user_id'] = 1;
@@ -107,6 +104,8 @@ class ListingsController {
 
         $this->db->query($query, $listingData);
 
+        $_SESSION['success_message'] = 'Listing created successfully';
+
         redirect('/listings');
     }
 
@@ -120,11 +119,9 @@ class ListingsController {
             return;
         }
 
-        $allowedFieldsKeys = array_keys($this->allowedFields);
-
         // Default the form values if they are not present (i.e. submitted via a form)
         $listingData = [];
-        foreach ($allowedFieldsKeys as $field) {
+        foreach ($this->allowedFields as $field) {
             $listingData[$field] = $params['listing'][$field] ?? $existingListing->$field;
         }
 
@@ -148,7 +145,7 @@ class ListingsController {
             return;
         }
 
-        $listingData = array_intersect_key($_POST, $this->allowedFields);
+        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
 
         $listingData = array_map('sanitize', $listingData);
 
@@ -164,8 +161,7 @@ class ListingsController {
 
         // Prepare query fields to persist listing to DB
         $fields = [];
-        $fieldKeys = array_keys($this->allowedFields);
-        foreach ($fieldKeys as $field) {
+        foreach ($this->allowedFields as $field) {
             $fields[] = "{$field} = :{$field}";
         }
         $fields = implode(', ', $fields);
@@ -195,10 +191,8 @@ class ListingsController {
     }
 
     public function destroy(array $params): void {
-        $listingId = $params['id'];
-
         $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $listingId])
+            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
             ->fetch();
 
         if (!$listing) {
@@ -219,22 +213,46 @@ class ListingsController {
     }
 
     private function validateListingData(array $listingData): array {
-        $requiredFields = [
-            'title',
-            'description',
-            'salary',
-            'salary_frequency',
-            'city',
-            'state',
-            'zip_code',
-            'email',
+        $errors = [];
+        if (empty($listingData['title']) || !Validation::string($listingData['title'])) {
+            $errors[] = "Job Title cannot be blank";
+        }
+
+        if (empty($listingData['description']) || !Validation::string($listingData['description'])) {
+            $errors[] = "Job Description cannot be blank";
+        }
+
+        if (empty($listingData['salary']) || !Validation::string($listingData['salary']) || !is_numeric($listingData['salary'])) {
+            $errors[] = "Salary is required and must contain only numbers and decimal points";
+        }
+
+        $validFrequencies = [
+            'annually',
+            'monthly',
+            'bi_weekly',
+            'weekly',
+            'hourly',
+            'per_project',
         ];
 
-        $errors = [];
-        foreach ($requiredFields as $field) {
-            if (empty($listingData[$field]) || !Validation::string($listingData[$field])) {
-                $errors[] = $field;
-            }
+        if (empty($listingData['salary_frequency']) || !in_array($listingData['salary_frequency'], $validFrequencies)) {
+            $errors[] = "Salary Frequency is required";
+        }
+
+        if (empty($listingData['city']) || !Validation::string($listingData['city'])) {
+            $errors[] = "City cannot be blank";
+        }
+
+        if (empty($listingData['state']) || !Validation::string($listingData['state'])) {
+            $errors[] = "State cannot be blank";
+        }
+
+        if (empty($listingData['zip_code']) || !Validation::string($listingData['zip_code'])) {
+            $errors[] = "ZIP Code cannot be blank";
+        }
+
+        if (empty($listingData['email']) || !Validation::string($listingData['email'])) {
+            $errors[] = "Email Address For Applications must be a valid email address";
         }
 
         return $errors;

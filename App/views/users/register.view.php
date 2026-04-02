@@ -7,7 +7,7 @@ loadPartial('navbar');
 <div class="flex justify-center items-center mt-20">
     <div class="bg-white p-8 rounded-lg shadow-md w-full md:w-500 mx-6">
         <h2 class="text-4xl text-center font-bold mb-4">Register</h2>
-        <?php loadPartial('messages'); ?>
+        <?php loadPartial('form-errors', ['errors' => $errors]); ?>
         <form method="POST" action="/register">
             <div class="mb-4">
                 <label for="name" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
@@ -50,6 +50,17 @@ loadPartial('navbar');
                 id="state"
                 type="text"
                 name="state"
+                class="w-full px-4 py-2 border rounded focus:outline-none"
+                />
+            </div>
+            <div class="mb-4">
+                <label for="zip_code" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+                    ZIP Code
+                </label>
+                <input
+                id="zip_code"
+                type="text"
+                name="zip_code"
                 class="w-full px-4 py-2 border rounded focus:outline-none"
                 />
             </div>
