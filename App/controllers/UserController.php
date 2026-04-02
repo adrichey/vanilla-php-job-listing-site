@@ -180,7 +180,7 @@ class UserController {
 
         $this->db->query($query, $formData);
 
-        $_SESSION['success_message'] = 'Your account has been created successfully! Please log in below.';
+        Session::setFlashMessage('success', 'Your account has been created successfully! Please log in below.');
 
         redirect('/login');
     }

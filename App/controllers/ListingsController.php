@@ -105,7 +105,7 @@ class ListingsController {
 
         $listingId = $this->db->conn->lastInsertId();
 
-        $_SESSION['success_message'] = 'Listing created successfully';
+        Session::setFlashMessage('success', 'Listing created successfully');
 
         redirect("/listings/{$listingId}");
     }
@@ -184,9 +184,7 @@ class ListingsController {
         $listingData['id'] = $listing->id;
         $this->db->query($query, $listingData);
 
-        // TODO: Refactor into session class later on
-        // Set flash message
-        $_SESSION['success_message'] = 'Listing updated successfully';
+        Session::setFlashMessage('success', 'Listing updated successfully');
 
         redirect("/listings/{$listing->id}");
     }
@@ -206,9 +204,7 @@ class ListingsController {
             'id' => $listing->id
         ]);
 
-        // TODO: Refactor into session class later on
-        // Set flash message
-        $_SESSION['success_message'] = 'Listing deleted successfully';
+        Session::setFlashMessage('success', 'Listing deleted successfully');
 
         redirect('/listings');
     }

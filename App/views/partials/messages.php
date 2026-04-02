@@ -1,11 +1,17 @@
-<?php if(isset($_SESSION['success_message'])): ?>
+<?php
+$fmSuccess = getFlashMessage('success');
+if(!empty($fmSuccess)):
+?>
     <div class="message bg-green-100 p-3 my-3">
-        <?= $_SESSION['success_message'] ?>
+        <?= $fmSuccess ?>
     </div>
-<?php unset($_SESSION['success_message']); endif; ?>
+<?php endif; ?>
 
-<?php if(isset($_SESSION['error_message'])): ?>
+<?php
+$fmError = getFlashMessage('error');
+if(!empty($fmError)):
+?>
     <div class="message bg-red-100 p-3 my-3">
-        <?= $_SESSION['error_message'] ?>
+        <?= $fmError ?>
     </div>
-<?php unset($_SESSION['error_message']); endif; ?>
+<?php endif; ?>

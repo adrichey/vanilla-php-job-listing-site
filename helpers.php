@@ -98,3 +98,7 @@ function redirect(string $url): void {
 function getAuthenticatedUser(): array|null {
     return Session::get('user', null);
 }
+
+function getFlashMessage(string $key): string {
+    return Session::getFlashMessage($key);
+}
