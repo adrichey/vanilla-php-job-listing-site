@@ -111,22 +111,28 @@ class ListingsController {
     }
 
     public function edit(array $params = []): void {
-        $existingListing = $this->db
+        $listing = $this->db
             ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
             ->fetch();
 
-        if (!$existingListing) {
+        if (!$listing) {
             ErrorController::notFound();
             return;
+        }
+
+        // TODO: Refactor into model public method Listing->isOwner(int $userId)
+        if (Session::get('user')['id'] !== $listing->user_id) {
+            Session::setFlashMessage('error', 'You do not have permission to edit this listing');
+            redirect("/listings/{$listing->id}");
         }
 
         // Default the form values if they are not present (i.e. submitted via a form)
         $listingData = [];
         foreach ($this->allowedFields as $field) {
-            $listingData[$field] = $params['listing'][$field] ?? $existingListing->$field;
+            $listingData[$field] = $params['listing'][$field] ?? $listing->$field;
         }
 
-        $listingData['id'] = $existingListing->id;
+        $listingData['id'] = $listing->id;
         $listingData['salary'] = convertCentsToDollars($listingData['salary']);
 
         loadView('listings/edit', [
@@ -181,6 +187,12 @@ class ListingsController {
             $listingData['salary'] = convertCurrencyToCents(floatval($listingData['salary']));
         }
 
+        // TODO: Refactor into model public method Listing->isOwner(int $userId)
+        if (Session::get('user')['id'] !== $listing->user_id) {
+            Session::setFlashMessage('error', 'You do not have permission to edit this listing');
+            redirect("/listings/{$listing->id}");
+        }
+
         $listingData['id'] = $listing->id;
         $this->db->query($query, $listingData);
 
@@ -199,7 +211,12 @@ class ListingsController {
             return;
         }
 
-        // TODO: Only allow user that created listing to delete it once we implement user system
+        // TODO: Refactor into model public method Listing->isOwner(int $userId)
+        if (Session::get('user')['id'] !== $listing->user_id) {
+            Session::setFlashMessage('error', 'You do not have permission to delete this listing');
+            redirect("/listings/{$listing->id}");
+        }
+
         $this->db->query('DELETE FROM listings WHERE id = :id', [
             'id' => $listing->id
         ]);
