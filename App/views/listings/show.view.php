@@ -39,6 +39,9 @@ $user = getAuthenticatedUser();
                         Local
                     </span>
                 </li>
+                <li class="mb-2">
+                    <strong>Tags:</strong> <span><?= $listing->tags ?></span>
+                </li>
             </ul>
         </div>
     </div>

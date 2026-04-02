@@ -8,6 +8,9 @@
                 <strong>Location:</strong> <?= $listing->city ?>, <?= $listing->state ?>
                 <span class="text-xs bg-blue-500 text-white rounded-full px-2 py-1 ml-2">Local</span>
             </li>
+            <li class="mb-2">
+                <strong>Tags:</strong> <span><?= $listing->tags ?></span>
+            </li>
         </ul>
         <a
         href="/listings/<?= $listing->id ?>"

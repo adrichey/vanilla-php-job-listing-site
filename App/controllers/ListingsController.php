@@ -22,6 +22,7 @@ class ListingsController {
             'salary_frequency',
             'requirements',
             'benefits',
+            'tags',
             'company',
             'address',
             'city',

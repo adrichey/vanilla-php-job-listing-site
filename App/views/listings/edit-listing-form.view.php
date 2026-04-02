@@ -24,6 +24,18 @@
     ><?= $listing['description'] ?></textarea>
 </div>
 <div class="mb-4">
+    <label for="tags" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
+        Tags <span class="text-xs">(Comma separated list of search terms)</span>
+    </label>
+    <input
+    id="tags"
+    type="text"
+    name="tags"
+    class="w-full px-4 py-2 border rounded focus:outline-none"
+    value="<?= $listing['tags'] ?>"
+    />
+</div>
+<div class="mb-4">
     <label for="salary" class="block text-gray-700 text-base font-semibold mb-2 ml-2">
         Salary <span class="text-red-500">*</span>
     </label>
