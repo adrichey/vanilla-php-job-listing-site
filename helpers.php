@@ -1,5 +1,7 @@
 <?php
 
+use Framework\Session;
+
 /**
  * Get the base path
  * 
@@ -91,4 +93,8 @@ function sanitize(string $dirty): string {
 function redirect(string $url): void {
     header("Location: {$url}");
     exit;
+}
+
+function getAuthenticatedUser(): array|null {
+    return Session::get('user', null);
 }

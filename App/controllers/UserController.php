@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Framework\Database;
 use Framework\Validation;
+use Framework\Session;
 
 class UserController {
     private $db;
@@ -18,8 +19,65 @@ class UserController {
     }
 
     public function authenticate(): void {
-        // TODO: Get stuff from POST and authenticate user
-        inspect($_POST, true);
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $errors = [];
+
+        if (empty($email) || !Validation::email($email)) {
+            $errors[] = 'Email must be a valid email address';
+        }
+
+        $minPasswordLength = 10;
+        if (empty($password) || !Validation::string($password, $minPasswordLength, 255)) {
+            $errors[] = "Password must be at least {$minPasswordLength} characters";
+        }
+
+        if (!empty($errors)) {
+            loadView('users/login', [
+                'errors' => $errors,
+            ]);
+            return;
+        }
+
+        $user = $this->db
+            ->query('SELECT * FROM users WHERE email = :email LIMIT 1', ['email' => $email])
+            ->fetch();
+
+        if (!$user) {
+            $errors[] = 'User was not found for this email and password combination';
+            loadView('users/login', [
+                'errors' => $errors,
+            ]);
+            return;
+        }
+
+        if (!password_verify($password, $user->password)) {
+            $errors[] = 'User was not found for this email and password combination';
+            loadView('users/login', [
+                'errors' => $errors,
+            ]);
+            return;
+        }
+
+        Session::set('user', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'city' => $user->city,
+            'state' => $user->state,
+            'zip_code' => $user->zip_code,
+        ]);
+
+        redirect('/');
+    }
+
+    public function logout(): void {
+        Session::clearAll();
+
+        $params = session_get_cookie_params();
+        setcookie('PHPSESSID', '', time() - 86400, $params['path'], $params['domain']);
+
+        redirect('/');
     }
 
     public function register(): void {

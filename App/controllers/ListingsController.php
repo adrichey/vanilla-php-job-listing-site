@@ -104,9 +104,11 @@ class ListingsController {
 
         $this->db->query($query, $listingData);
 
+        $listingId = $this->db->conn->lastInsertId();
+
         $_SESSION['success_message'] = 'Listing created successfully';
 
-        redirect('/listings');
+        redirect("/listings/{$listingId}");
     }
 
     public function edit(array $params = []): void {

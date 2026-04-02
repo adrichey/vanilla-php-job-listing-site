@@ -21,3 +21,4 @@ $router->get('/login', 'UserController@login');
 // Authentication CRUD Routes
 $router->post('/register', 'UserController@store');
 $router->post('/login', 'UserController@authenticate');
+$router->post('/logout', 'UserController@logout');
