@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Framework\Database;
 use Framework\Validation;
+use Framework\Session;
 
 class ListingsController {
     private $db;
@@ -69,9 +70,7 @@ class ListingsController {
 
     public function store(): void {
         $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
-
-        // TODO: Get this from logged in user session details once implemented
-        $listingData['user_id'] = 1;
+        $listingData['user_id'] = Session::get('user')['id'];
 
         $listingData = array_map('sanitize', $listingData);
 
