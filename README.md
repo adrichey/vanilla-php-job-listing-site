@@ -6,9 +6,10 @@ The application was built with PHP 8.5.4, Composer 2.9 (for PSR-4 routing), and 
 ## Running the application
 I have included a docker container implementation for ease of use. It will populate the database, install our composer dependencies, and launch the application locally. To fire up things locally, please follow the steps below:
 1. Download and install Docker. This will vary by system. [Linux](https://docs.docker.com/desktop/setup/install/linux/) | [Windows](https://docs.docker.com/desktop/setup/install/windows-install/) | [MacOS](https://docs.docker.com/desktop/setup/install/mac-install/)
-2. Once Docker is installed, open up a terminal and run the following command:
+2. Copy `.env.example` to `.env`. You shouldn't have to change anything if you are running the app using Docker.
+3. Once Docker is installed, open up a terminal and run the following command:
 `docker-compose up --build -d`
-3. Once the application is built, you can view the application at [http://localhost:8000/](http://localhost:8000/)
+4. Once the application is built, you can view the application at [http://localhost:8000/](http://localhost:8000/)
 
 You can take down the contain using the command: `docker-compose down`
 
