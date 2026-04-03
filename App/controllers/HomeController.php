@@ -2,18 +2,17 @@
 
 namespace App\Controllers;
 
-use Framework\Database;
+use App\Repositories\ListingRepository;
 
 class HomeController {
-    private $db;
+    private $listingRepo;
 
     public function __construct() {
-        $dbConfig = require basePath('config/db.php');
-        $this->db = new Database($dbConfig);
+        $this->listingRepo = new ListingRepository();
     }
 
     public function index(): void {
-        $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC LIMIT 6')->fetchAll();
+        $listings = $this->listingRepo->fetchAll();
 
         loadView('home', [
             'listings' => $listings,

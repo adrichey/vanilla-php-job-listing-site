@@ -61,31 +61,6 @@ function inspect(mixed $variable, bool $die = false) {
     }
 }
 
-function formatCurrency(int $amountInCents): string {
-    $amount = $amountInCents / 100;
-    $formatter = new NumberFormatter('en_US', NumberFormatter::CURRENCY);
-
-    $formattedAmount = $formatter->formatCurrency($amount, 'USD');
-
-    if ($formattedAmount === false) {
-        return $amount;
-    }
-
-    if (str_ends_with($formattedAmount, '.00')) {
-        return substr($formattedAmount, 0, -3);
-    }
-
-    return $formattedAmount;
-}
-
-function convertCurrencyToCents(int|float $amount): int {
-    return intval(round($amount * 100, 0));
-}
-
-function convertCentsToDollars(int $amount): float {
-    return floatval($amount) / 100;
-}
-
 function sanitize(string $dirty): string {
     return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
 }

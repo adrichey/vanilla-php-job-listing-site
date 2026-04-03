@@ -13,14 +13,14 @@ loadPartial('navbar');
             This is a success message.
         </div>
         -->
-        <form method="POST" action="/listings/<?= $listing['id'] ?>">
+        <form method="POST" action="/listings/<?= $listing->id ?>">
             <input type="hidden" name="_method" value="PUT" />
             <?php loadView('listings/edit-listing-form', ['listing' => $listing]); ?>
             <button class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 my-3 rounded focus:outline-none">
                 Save
             </button>
             <a
-            href="/listings/<?= $listing['id'] ?>"
+            href="/listings/<?= $listing->id ?>"
             class="block text-center w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded focus:outline-none"
             >
                 Cancel

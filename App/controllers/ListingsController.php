@@ -2,39 +2,21 @@
 
 namespace App\Controllers;
 
+use App\Models\Listing;
+use App\Repositories\ListingRepository;
 use Framework\Database;
 use Framework\Validation;
 use Framework\Session;
 
 class ListingsController {
-    private $db;
-    private $allowedFields;
+    private $listingRepo;
 
     public function __construct() {
-        $dbConfig = require basePath('config/db.php');
-        $this->db = new Database($dbConfig);
-
-        // TODO: Might be good to put this into the Listings model once created
-        $this->allowedFields = [
-            'title',
-            'description',
-            'salary',
-            'salary_frequency',
-            'requirements',
-            'benefits',
-            'tags',
-            'company',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'phone',
-            'email',
-        ];
+        $this->listingRepo = new ListingRepository();
     }
 
     public function index(): void {
-        $listings = $this->db->query('SELECT * FROM listings ORDER BY created_at DESC')->fetchAll();
+        $listings = $this->listingRepo->fetchAll();
 
         loadView('listings/index', [
             'listings' => $listings,
@@ -42,9 +24,7 @@ class ListingsController {
     }
 
     public function show(array $params): void {
-        $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
-            ->fetch();
+        $listing = $this->listingRepo->fetch((int) $params['id']);
 
         if (!$listing) {
             ErrorController::notFound();
@@ -57,10 +37,9 @@ class ListingsController {
     }
 
     public function create(array $params = []): void {
-        // Default the form values if they are not present (i.e. submitted via a form)
-        $listing = [];
-        foreach ($this->allowedFields as $field) {
-            $listing[$field] = $params['listing'][$field] ?? '';
+        $listing = new Listing();
+        if (isset($params['listing']) && !empty($params['listing'])) {
+            $listing->merge($params['listing']);
         }
 
         loadView('listings/create', [
@@ -70,41 +49,25 @@ class ListingsController {
     }
 
     public function store(): void {
-        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
-        $listingData['user_id'] = Session::get('user')['id'];
-
+        $listingData = array_merge($_POST, [
+            'user_id' => Session::get('user')['id'],
+            'salary' => isset($_POST['salary']) ? intval(floatval($_POST['salary']) * 100) : 0,
+        ]);
         $listingData = array_map('sanitize', $listingData);
 
         $errors = $this->validateListingData($listingData);
 
+        $listing = new Listing($listingData);
+
         if (!empty($errors)) {
             $this->create([
                 'errors' => $errors,
-                'listing' => $listingData,
+                'listing' => $listing,
             ]);
             return;
         }
 
-        // Prepare query fields to persist listing to DB
-        $fields = implode(',', array_keys($listingData));
-        $values = ':' . implode(',:', array_keys($listingData));
-        $query = "INSERT INTO listings ({$fields}) VALUES ({$values})";
-
-        // Default empty values to null for query
-        foreach ($listingData as $key => $value) {
-            if ($value === '') {
-                $listingData[$key] = null;
-            }
-        }
-
-        // Salary is stored in cents, so we need to normalize input
-        if ($listingData['salary'] !== null) {
-            $listingData['salary'] = convertCurrencyToCents(floatval($listingData['salary']));
-        }
-
-        $this->db->query($query, $listingData);
-
-        $listingId = $this->db->conn->lastInsertId();
+        $listingId = $this->listingRepo->store($listing);
 
         Session::setFlashMessage('success', 'Listing created successfully');
 
@@ -112,90 +75,65 @@ class ListingsController {
     }
 
     public function edit(array $params = []): void {
-        $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
-            ->fetch();
+        $id = (int) $params['id'];
+        $listing = $this->listingRepo->fetch($id);
 
         if (!$listing) {
             ErrorController::notFound();
             return;
         }
 
-        // TODO: Refactor into model public method Listing->isOwner(int $userId)
         if (Session::get('user')['id'] !== $listing->user_id) {
             Session::setFlashMessage('error', 'You do not have permission to edit this listing');
             redirect("/listings/{$listing->id}");
         }
 
-        // Default the form values if they are not present (i.e. submitted via a form)
-        $listingData = [];
-        foreach ($this->allowedFields as $field) {
-            $listingData[$field] = $params['listing'][$field] ?? $listing->$field;
+        if (isset($params['listing']) && !empty($params['listing'])) {
+            $listing->merge($params['listing']);
         }
 
-        $listingData['id'] = $listing->id;
-        $listingData['salary'] = convertCentsToDollars($listingData['salary']);
-
         loadView('listings/edit', [
+            'id' => $id,
             'errors' => $params['errors'] ?? [],
-            'labels' => $this->allowedFields,
-            'listing' => $listingData,
+            'listing' => $listing,
         ]);
     }
 
     public function update(array $params): void {
-        $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
-            ->fetch();
+        $id = (int) $params['id'];
+        $listing = $this->listingRepo->fetch($id);
 
         if (!$listing) {
             ErrorController::notFound();
             return;
         }
 
-        $listingData = array_intersect_key($_POST, array_flip($this->allowedFields));
+        if (Session::get('user')['id'] !== $listing->user_id) {
+            Session::setFlashMessage('error', 'You do not have permission to edit this listing');
+            redirect("/listings/{$listing->id}");
+        }
+
+        $listingData = array_merge($_POST, [
+            'user_id' => Session::get('user')['id'],
+            'salary' => isset($_POST['salary']) ? intval($_POST['salary'] * 100) : 0,
+        ]);
 
         $listingData = array_map('sanitize', $listingData);
 
         $errors = $this->validateListingData($listingData);
 
+        $listing->merge(new Listing($listingData));
+
         if (!empty($errors)) {
             $this->edit([
+                'id' => $id,
                 'errors' => $errors,
-                'listing' => $listingData,
+                'listing' => $listing,
             ]);
             return;
         }
 
-        // Prepare query fields to persist listing to DB
-        $fields = [];
-        foreach ($this->allowedFields as $field) {
-            $fields[] = "{$field} = :{$field}";
-        }
-        $fields = implode(', ', $fields);
-
-        $query = "UPDATE listings SET {$fields} WHERE id = :id";
-
-        // Default empty values to null for query
-        foreach ($listingData as $key => $value) {
-            if ($value === '') {
-                $listingData[$key] = null;
-            }
-        }
-
-        // Salary is stored in cents, so we need to normalize input
-        if ($listingData['salary'] !== null) {
-            $listingData['salary'] = convertCurrencyToCents(floatval($listingData['salary']));
-        }
-
-        // TODO: Refactor into model public method Listing->isOwner(int $userId)
-        if (Session::get('user')['id'] !== $listing->user_id) {
-            Session::setFlashMessage('error', 'You do not have permission to edit this listing');
-            redirect("/listings/{$listing->id}");
-        }
-
-        $listingData['id'] = $listing->id;
-        $this->db->query($query, $listingData);
+        $this->listingRepo->update($listing);
 
         Session::setFlashMessage('success', 'Listing updated successfully');
 
@@ -203,9 +141,7 @@ class ListingsController {
     }
 
     public function destroy(array $params): void {
-        $listing = $this->db
-            ->query('SELECT * FROM listings WHERE id = :id LIMIT 1', ['id' => $params['id'] ?? ''])
-            ->fetch();
+        $listing = $this->listingRepo->fetch((int) $params['id']);
 
         if (!$listing) {
             ErrorController::notFound();
@@ -218,9 +154,7 @@ class ListingsController {
             redirect("/listings/{$listing->id}");
         }
 
-        $this->db->query('DELETE FROM listings WHERE id = :id', [
-            'id' => $listing->id
-        ]);
+        $this->listingRepo->destroy($listing);
 
         Session::setFlashMessage('success', 'Listing deleted successfully');
 
@@ -231,22 +165,7 @@ class ListingsController {
         $keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
         $location = isset($_GET['location']) ? trim($_GET['location']) : '';
 
-        // Build keywords WHERE clause
-        $keywordFields = ['title', 'description', 'tags', 'company'];
-        $keywordSearch = implode(' OR ', array_map(fn($keyword) => "{$keyword} LIKE :keywords", $keywordFields));
-
-        // Build location WHERE clause
-        $locationFields = ['city', 'state', 'zip_code'];
-        $locationSearch = implode(' OR ', array_map(fn($keyword) => "{$keyword} LIKE :location", $locationFields));
-
-        $query = "SELECT * FROM listings WHERE ({$keywordSearch}) AND ({$locationSearch})";
-
-        $params = [
-            'keywords' => "%{$keywords}%",
-            'location' => "%{$location}%",
-        ];
-
-        $listings = $this->db->query($query, $params)->fetchAll();
+        $listings = $this->listingRepo->search($keywords, $location);
 
         loadView('/listings/index', [
             'listings' => $listings,

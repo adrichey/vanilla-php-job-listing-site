@@ -1,7 +1,7 @@
 <?php
 loadPartial('head');
 loadPartial('navbar');
-loadPartial('showcase-search', ['keywords' => $keywords, 'location' => $location]);
+loadPartial('showcase-search', ['keywords' => $keywords ?? '', 'location' => $location ?? '']);
 loadPartial('top-banner');
 ?>
 
