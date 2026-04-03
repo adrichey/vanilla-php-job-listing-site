@@ -24,7 +24,7 @@ class ListingRepository {
             ->fetchAll(PDO::FETCH_CLASS, Listing::class);
     }
 
-    public function fetch(int $id): Listing {
+    public function fetch(int $id): Listing|false {
         $statement = $this->db->query('SELECT * FROM listings WHERE id = :id LIMIT 1', [
             'id' => $id,
         ]);

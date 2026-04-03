@@ -2,16 +2,16 @@
 
 namespace App\Controllers;
 
-use Framework\Database;
+use App\Models\User;
+use App\Repositories\UserRepository;
 use Framework\Validation;
 use Framework\Session;
 
 class UserController {
-    private $db;
+    private $userRepo;
 
     public function __construct() {
-        $dbConfig = require basePath('config/db.php');
-        $this->db = new Database($dbConfig);
+        $this->userRepo = new UserRepository();
     }
 
     public function login(): void {
@@ -39,9 +39,7 @@ class UserController {
             return;
         }
 
-        $user = $this->db
-            ->query('SELECT * FROM users WHERE email = :email LIMIT 1', ['email' => $email])
-            ->fetch();
+        $user = $this->userRepo->fetchByEmail($email);
 
         if (!$user) {
             $errors[] = 'User was not found for this email and password combination';
@@ -148,9 +146,7 @@ class UserController {
             return;
         }
 
-        $user = $this->db
-            ->query('SELECT * FROM users WHERE email = :email LIMIT 1', ['email' => $formData['email']])
-            ->fetch();
+        $user = $this->userRepo->fetchByEmail($formData['email']);
 
         if ($user) {
             $errors[] = "This email address is already in use";
@@ -161,24 +157,9 @@ class UserController {
             return;
         }
 
-        unset($formData['password_confirmation']);
-
-        // Prepare query fields to persist listing to DB
-        $fields = implode(',', array_keys($formData));
-        $values = ':' . implode(',:', array_keys($formData));
-        $query = "INSERT INTO users ({$fields}) VALUES ({$values})";
-
-        // Default empty values to null for query
-        foreach ($formData as $key => $value) {
-            if ($value === '') {
-                $formData[$key] = null;
-            }
-        }
-
-        // Hash passwords
-        $formData['password'] = password_hash($formData['password'], PASSWORD_DEFAULT);
-
-        $this->db->query($query, $formData);
+        $user = new User($formData);
+        $user->password = password_hash($formData['password'], PASSWORD_DEFAULT);
+        $this->userRepo->store($user);
 
         Session::setFlashMessage('success', 'Your account has been created successfully! Please log in below.');
 

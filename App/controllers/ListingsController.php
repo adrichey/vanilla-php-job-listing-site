@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Models\Listing;
 use App\Repositories\ListingRepository;
-use Framework\Database;
 use Framework\Validation;
 use Framework\Session;
 
@@ -148,7 +147,6 @@ class ListingsController {
             return;
         }
 
-        // TODO: Refactor into model public method Listing->isOwner(int $userId)
         if (Session::get('user')['id'] !== $listing->user_id) {
             Session::setFlashMessage('error', 'You do not have permission to delete this listing');
             redirect("/listings/{$listing->id}");
