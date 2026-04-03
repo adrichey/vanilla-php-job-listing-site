@@ -10,8 +10,7 @@ class UserRepository {
     private $db;
 
     public function __construct() {
-        $dbConfig = require basePath('config/db.php');
-        $this->db = new Database($dbConfig);
+        $this->db = new Database();
         $this->db->conn->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_TO_STRING);
     }
 
