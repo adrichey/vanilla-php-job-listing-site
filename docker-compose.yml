@@ -20,6 +20,12 @@ services:
     volumes:
       - ./:/var/www/html
 
+  composer:
+    image: composer:2.9
+    command: ["composer", "install"]
+    volumes:
+      - ./:/app
+
   db:
     container_name: vanilla-jobs-db
     image: mariadb:10.11.16
