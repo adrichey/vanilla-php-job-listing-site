@@ -16,6 +16,7 @@ services:
   php-fpm:
     container_name: vanilla-jobs-php
     image: php:8.5.4-fpm
+    build: .
     volumes:
       - ./:/var/www/html
 
